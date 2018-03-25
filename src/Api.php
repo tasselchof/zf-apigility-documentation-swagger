@@ -25,6 +25,11 @@ class Api extends BaseApi
         $this->api = $api;
     }
 
+    protected function getFields(\ZF\Apigility\Documentation\Service $service)
+    {
+
+    }
+
     protected function operationToArray(Operation $operation,
         \ZF\Apigility\Documentation\Service $service,
         $collection = true
@@ -34,10 +39,18 @@ class Api extends BaseApi
 
         switch ($operation->getHttpMethod()) {
             case Request::METHOD_GET:
+                $fields = $service->getFields('input_filter');
+
+                foreach ($fields as $field) {
+                    $parameters[] = [
+                        'name' => $field->getName(),
+                    ];
+                }
                 break;
 
             case Request::METHOD_POST:
             case Request::METHOD_PUT:
+            case Request::METHOD_PATCH:
                 $parameters = [
                     [
                         'in'          => 'body',
