@@ -44,6 +44,8 @@ class Api extends BaseApi
                 foreach ($fields as $field) {
                     $parameters[] = [
                         'name' => $field->getName(),
+                        'description' => $field->getDescription(),
+                        'required' => $field->isRequired(),
                     ];
                 }
                 break;
