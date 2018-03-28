@@ -25,11 +25,6 @@ class Api extends BaseApi
         $this->api = $api;
     }
 
-    protected function getFields(\ZF\Apigility\Documentation\Service $service)
-    {
-
-    }
-
     protected function operationToArray(Operation $operation,
         \ZF\Apigility\Documentation\Service $service,
         $collection = true
@@ -189,7 +184,7 @@ class Api extends BaseApi
 
             $requiredProperties = $properties = [];
             foreach ($fields as $field) {
-                if ($field->getType() == 'object') {
+                if ($field->getFieldType() == 'object') {
                     $properties[$field->getName()] = [
                         '$ref' => sprintf(
                             '#/definitions/%s',
@@ -197,14 +192,16 @@ class Api extends BaseApi
                     ];
                 } else {
                     $properties[$field->getName()] = [
-                        'type'        => ! empty($field->getType())
-                            ? $field->getType() : 'string',
+                        'type'        => ! empty($field->getFieldType()) ? $field->getFieldType() : 'string',
                         //'dataType'    => method_exists($field, 'getFieldType') ? $field->getFieldType() : 'string',
                         //                    'format'      => '',
                         //                    'enum'        => [],
                         'description' => $field->getDescription(),
-                        //                    'example' => null,
                     ];
+
+                    if (!empty($field->getExample())) {
+                        $properties[$field->getName()]['example'] = $field->getExample();
+                    }
                 }
 
                 if ($field->isRequired()) {
