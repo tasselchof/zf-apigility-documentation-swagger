@@ -25,7 +25,8 @@ class Api extends BaseApi
         $this->api = $api;
     }
 
-    protected function operationToArray(Operation $operation,
+    protected function operationToArray(
+        Operation $operation,
         \ZF\Apigility\Documentation\Service $service,
         $collection = true
     ) {
@@ -57,7 +58,8 @@ class Api extends BaseApi
                         'schema'      => [
                             '$ref' => sprintf(
                                 '#/definitions/%s',
-                                $service->getName()),
+                                $service->getName()
+                            ),
                         ],
                     ],
                 ];
@@ -82,15 +84,18 @@ class Api extends BaseApi
                                 'items' => [
                                     '$ref' => sprintf(
                                         '#/definitions/%s',
-                                        $service->getName()),
+                                        $service->getName()
+                                    ),
                                 ],
-                            ];
+                                ];
                         } else {
                             $responses[$responseStatusCode['code']]['schema']
                                 = [
                                 '$ref' => sprintf(
-                                    '#/definitions/%s', $service->getName()),
-                            ];
+                                    '#/definitions/%s',
+                                    $service->getName()
+                                ),
+                                ];
                         }
                         break;
 
@@ -109,8 +114,10 @@ class Api extends BaseApi
             'summary'     => $operation->getDescription(),
             'description' => '',
             'operationId' => sprintf(
-                '%s%s', strtolower($operation->getHttpMethod()),
-                $service->getName()),
+                '%s%s',
+                strtolower($operation->getHttpMethod()),
+                $service->getName()
+            ),
             'consumes'    => $consumes,
             'produces'    => $service->getRequestContentTypes(),
             'parameters'  => $parameters,
@@ -138,14 +145,22 @@ class Api extends BaseApi
         foreach ($this->api->services as $service) {
             // routes and parameter mangling ([:foo] will become {foo}
             $routeBasePath         = substr(
-                $service->getRoute(), 0, strpos($service->getRoute(), '['));
+                $service->getRoute(),
+                0,
+                strpos($service->getRoute(), '[')
+            );
             $routeWithReplacements = str_replace(
-                ['[', ']', '{/', '{:'], ['{', '}', '/{', '{'],
-                $service->getRoute());
+                ['[', ']', '{/', '{:'],
+                ['{', '}', '/{', '{'],
+                $service->getRoute()
+            );
 
             // find all parameters in Swagger naming format
             preg_match_all(
-                '#{([\w\d_-]+)}#', $routeWithReplacements, $parameterMatches);
+                '#{([\w\d_-]+)}#',
+                $routeWithReplacements,
+                $parameterMatches
+            );
 
             $tags[] = [
                 'name'        => $service->getName(),
@@ -162,12 +177,15 @@ class Api extends BaseApi
 
             if (! empty($service->getOperations())) {
                 $route = str_replace(
-                    '/{' . $service->getRouteIdentifierName() . '}', '',
-                    $routeWithReplacements);
+                    '/{' . $service->getRouteIdentifierName() . '}',
+                    '',
+                    $routeWithReplacements
+                );
 
                 foreach ($service->getOperations() as $operation) {
                     $paths[$route][strtolower(
-                        $operation->getHttpMethod())]
+                        $operation->getHttpMethod()
+                    )]
                         = $this->operationToArray($operation, $service);
                 }
             }
@@ -175,7 +193,8 @@ class Api extends BaseApi
             if (! empty($service->getEntityOperations())) {
                 foreach ($service->getEntityOperations() as $operation) {
                     $paths[$routeWithReplacements][strtolower(
-                        $operation->getHttpMethod())]
+                        $operation->getHttpMethod()
+                    )]
                         = $this->operationToArray($operation, $service, false);
                 }
             }
@@ -188,7 +207,8 @@ class Api extends BaseApi
                     $properties[$field->getName()] = [
                         '$ref' => sprintf(
                             '#/definitions/%s',
-                            ucfirst($field->getName())),
+                            ucfirst($field->getName())
+                        ),
                     ];
                 } else {
                     $properties[$field->getName()] = [
