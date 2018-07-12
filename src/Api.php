@@ -219,7 +219,7 @@ class Api extends BaseApi
                         'description' => $field->getDescription(),
                     ];
 
-                    if (!empty($field->getExample())) {
+                    if (! empty($field->getExample())) {
                         $properties[$field->getName()]['example'] = $field->getExample();
                     }
                 }
